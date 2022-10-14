@@ -2,19 +2,22 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
+const chatRotes = require("./routes/chatRoutes");
+
 const { errorHandler, notFound } = require("./middleware/errorMiddleware");
-const cors = require('cors')
+const cors = require("cors");
 dotenv.config();
 connectDB();
 const app = express();
 
 var corsOptions = {
-    origin: "*"
-  }
+  origin: "*",
+};
 app.use(express.json());
 app.use(cors(corsOptions));
 
 app.use("/api/user", userRoutes);
+app.use("/api/chat", chatRotes);
 app.use(notFound);
 app.use(errorHandler);
 

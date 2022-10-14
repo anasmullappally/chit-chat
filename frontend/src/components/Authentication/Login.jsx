@@ -37,12 +37,10 @@ function Login() {
     }
 
     try {
-      const data = await axios.post(
-        "http://localhost:5000/api/user/login",
-        { email, password },
-        
-      );
-      console.log(data);
+      const data = await axios.post("http://localhost:5000/api/user/login", {
+        email,
+        password,
+      });
       toast({
         title: "Login Successfully",
         status: "success",
@@ -50,11 +48,10 @@ function Login() {
         isClosable: true,
         position: "top",
       });
-      localStorage.setItem("userInfo",JSON.stringify(data))
-      setLoading(false)
-      navigate("/chats")
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      setLoading(false);
+      navigate("/chats");
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error Ocurred!",
         description: error.response.data.message,
@@ -72,6 +69,7 @@ function Login() {
         <FormLabel>Email</FormLabel>
         <Input
           placeholder="Enter Your Email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         ></Input>
       </FormControl>
@@ -81,6 +79,7 @@ function Login() {
           <Input
             type={show ? "text" : "password"}
             placeholder="Enter Your Password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           ></Input>
           <InputRightElement width={"4.5rem"}>
