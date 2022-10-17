@@ -32,7 +32,6 @@ function SignUp() {
     if (!name || !email || !password || !confirmPassword) {
       toast({
         title: "Please Fill all the Fields.",
-        // description: "We've created your account for you.",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -101,7 +100,6 @@ function SignUp() {
     if (pics === undefined) {
       toast({
         title: "Please select an Image.",
-        // description: "We've created your account for you.",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -130,7 +128,6 @@ function SignUp() {
     } else {
       toast({
         title: "Please select an Image.",
-        // description: "We've created your account for you.",
         status: "warning",
         duration: 5000,
         isClosable: true,
