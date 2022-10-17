@@ -59,7 +59,7 @@ function SignUp() {
       };
       console.log("data", name, email, password, confirmPassword);
       const response = await axios.post(
-        "http://localhost:5000/api/user",
+        `${process.env.REACT_APP_BASE_URL}/user`,
         {
           name,
           email,

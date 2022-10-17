@@ -35,10 +35,9 @@ function Login() {
       setLoading(false);
       return;
     }
-
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/user/login",
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/user/login`,
         {
           email,
           password,
@@ -51,7 +50,7 @@ function Login() {
         isClosable: true,
         position: "top",
       });
-      localStorage.setItem("userInfo", JSON.stringify(response.data));
+      localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
       navigate("/chats");
     } catch (error) {
