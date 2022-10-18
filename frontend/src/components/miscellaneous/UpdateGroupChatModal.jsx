@@ -22,7 +22,7 @@ import { ChatState } from "../../context/ChatProvider";
 import UserBadgeItem from "../userAvatar/UserBadgeItem";
 import UserListItem from "../userAvatar/UserListItem";
 
-function UpdateGroupChatModal({ fetchAgain, setFetchAgain }) {
+function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { selectedChat, setSelectedChat, user } = ChatState();
 
@@ -187,7 +187,7 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain }) {
       console.log("removed", data);
       userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(data);
       setFetchAgain(!fetchAgain);
-
+      fetchMessages();
       setLoading(false);
     } catch (error) {
       toast({

@@ -25,8 +25,8 @@ import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModal";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ChatLoading from "../ChatLoading";
 import UserListItem from "../userAvatar/UserListItem";
+import ChatLoading from "../chat/ChatLoading";
 
 function SideBar() {
   const [search, setSearch] = useState("");
@@ -35,7 +35,6 @@ function SideBar() {
   const [loadingChat, setLoadingChat] = useState(false);
 
   const { user, setSelectedChat, chats, setChats } = ChatState();
-  console.log(user);
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -75,9 +74,7 @@ function SideBar() {
       setLoading(false);
       setSearchResults(data);
       setSearch("");
-      console.log(searchResults);
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error Occurred!",
         description: "Failed to Load the Search Results",
@@ -97,7 +94,6 @@ function SideBar() {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      console.log(userId);
       const { data } = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/chat`,
         { userId },

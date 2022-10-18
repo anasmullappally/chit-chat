@@ -2,10 +2,10 @@ import { AddIcon } from "@chakra-ui/icons";
 import { Box, Button, Stack, Text, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { getSender } from "../config/chatLogic";
-import { ChatState } from "../context/ChatProvider";
+import { getSender } from "../../config/chatLogic";
+import { ChatState } from "../../context/ChatProvider";
+import GroupChatModal from "../miscellaneous/GroupChatModal";
 import ChatLoading from "./ChatLoading";
-import GroupChatModal from "./miscellaneous/GroupChatModal";
 
 function MyChats({ fetchAgain }) {
   const [loggedUser, setLoggedUser] = useState();
@@ -18,9 +18,7 @@ function MyChats({ fetchAgain }) {
     fetchChats();
   }, [fetchAgain]);
 
-
   const fetchChats = async () => {
- 
     try {
       const config = {
         headers: {
@@ -56,6 +54,7 @@ function MyChats({ fetchAgain }) {
       borderRadius="lg"
       borderWidth={"1px"}
     >
+      
       <Box
         pb={3}
         px={3}
