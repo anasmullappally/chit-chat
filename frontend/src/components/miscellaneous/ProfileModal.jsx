@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 
 const ProfileModal = ({ user, children }) => {
+  console.log(user);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -49,7 +50,7 @@ const ProfileModal = ({ user, children }) => {
             <Image
               borderRadius="full"
               boxSize="125px"
-              src={user.pic}
+              src={user.picture}
               alt={user.name}
             />
             <Text

@@ -35,7 +35,7 @@ function SideBar() {
   const [loadingChat, setLoadingChat] = useState(false);
 
   const { user, setSelectedChat, chats, setChats } = ChatState();
-
+  console.log(user);
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -153,7 +153,7 @@ function SideBar() {
                 size="sm"
                 cursor="pointer"
                 name={user.name}
-                src={user.pic}
+                src={user.picture}
               />
             </MenuButton>
             <MenuList>
