@@ -16,12 +16,14 @@ import {
 import axios from "axios";
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChatState } from "../../context/ChatProvider";
 import UserBadgeItem from "../userAvatar/UserBadgeItem";
 import UserListItem from "../userAvatar/UserListItem";
 
 function GroupChatModal({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   const [groupChatName, setGroupChatName] = useState();
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -50,18 +52,30 @@ function GroupChatModal({ children }) {
         `${process.env.REACT_APP_BASE_URL}/user?search=${search}`,
         config
       );
-      console.log(data);
       setLoading(false);
       setSearchResults(data);
     } catch (error) {
-      toast({
-        title: "Error Occurred!",
-        description: "Failed to Load the Search Results",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-left",
-      });
+      if (error.response.status === 401) {
+        localStorage.removeItem("userInfo");
+        toast({
+          title: "Session Expired",
+          description: "Please Login",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Error Occurred!",
+          description: "Failed to Load the Search Results",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top-left",
+        });
+      }
     }
   };
 
@@ -110,7 +124,6 @@ function GroupChatModal({ children }) {
         },
         config
       );
-      console.log(data);
       setChats([data, ...chats]);
       onClose();
       toast({
@@ -121,14 +134,27 @@ function GroupChatModal({ children }) {
         position: "top",
       });
     } catch (error) {
-      toast({
-        title: "Failed to Create the Chat!",
-        description: error.response.data,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
+      if (error.response.status === 401) {
+        localStorage.removeItem("userInfo");
+        toast({
+          title: "Session Expired",
+          description: "Please Login",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Failed to Create the Chat!",
+          description: error.response.data,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+      }
     }
   };
 

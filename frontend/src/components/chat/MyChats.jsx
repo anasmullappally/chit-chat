@@ -1,17 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { AddIcon } from "@chakra-ui/icons";
 import { Box, Button, Stack, Text, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getSender } from "../../config/chatLogic";
 import { ChatState } from "../../context/ChatProvider";
 import GroupChatModal from "../miscellaneous/GroupChatModal";
 import ChatLoading from "./ChatLoading";
 
-function MyChats({ fetchAgain }) {
+function MyChats({ fetchAgain, setFetchAgain }) {
   const [loggedUser, setLoggedUser] = useState();
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
 
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
@@ -32,14 +35,27 @@ function MyChats({ fetchAgain }) {
       );
       setChats(data);
     } catch (error) {
-      toast({
-        title: "Error Occurred!",
-        description: "Failed to Load the Search Results",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-left",
-      });
+      if (error.response.status === 401) {
+        localStorage.removeItem("userInfo");
+        toast({
+          title: "Session Expired",
+          description: "Please Login",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Error Occurred!",
+          description: "Failed to Load the Search Results",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top-left",
+        });
+      }
     }
   };
 
@@ -54,7 +70,6 @@ function MyChats({ fetchAgain }) {
       borderRadius="lg"
       borderWidth={"1px"}
     >
-      
       <Box
         pb={3}
         px={3}
@@ -80,7 +95,7 @@ function MyChats({ fetchAgain }) {
         display={"flex"}
         flexDir="column"
         p={3}
-        bg="#f8f8f8"
+        bg="#F8F8F8"
         w="100%"
         h="100%"
         borderRadius="lg"
@@ -88,23 +103,27 @@ function MyChats({ fetchAgain }) {
       >
         {chats ? (
           <Stack overflowY={"scroll"}>
-            {chats.map((chat) => (
-              <Box
-                onClick={() => setSelectedChat(chat)}
-                cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "E8E8E8"}
-                px={3}
-                py={2}
-                borderRadius="lg"
-                key={chat._id}
-              >
-                <Text>
-                  {!chat.isGroupChat
-                    ? getSender(loggedUser, chat.users)
-                    : chat.chatName}
-                </Text>
-              </Box>
-            ))}
+            {chats?.map(
+              (chat) =>
+                chat.chatName && (
+                  <Box
+                    onClick={() => setSelectedChat(chat)}
+                    cursor="pointer"
+                    bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
+                    color={selectedChat === chat ? "white" : "black"}
+                    px={3}
+                    py={2}
+                    borderRadius="lg"
+                    key={chat._id + 1}
+                  >
+                    <Text>
+                      {!chat.isGroupChat
+                        ? getSender(loggedUser, chat.users)
+                        : chat.chatName}
+                    </Text>
+                  </Box>
+                )
+            )}
           </Stack>
         ) : (
           <ChatLoading />

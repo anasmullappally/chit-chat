@@ -10,9 +10,7 @@ import { ChatState } from "../../context/ChatProvider";
 import { Avatar, Tooltip } from "@chakra-ui/react";
 
 function ScrollableChat({ messages }) {
-  console.log("message comp", messages);
   const { user } = ChatState();
-  console.log(user);
   return (
     <ScrollableFeed>
       {messages &&

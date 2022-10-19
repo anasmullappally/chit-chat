@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChatState } from "../../context/ChatProvider";
 import UserBadgeItem from "../userAvatar/UserBadgeItem";
 import UserListItem from "../userAvatar/UserListItem";
@@ -25,6 +26,7 @@ import UserListItem from "../userAvatar/UserListItem";
 function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { selectedChat, setSelectedChat, user } = ChatState();
+  const navigate = useNavigate();
 
   const [groupChatName, setGroupChatName] = useState();
   const [search, setSearch] = useState("");
@@ -53,19 +55,31 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
         },
         config
       );
-      console.log(data);
       setSelectedChat(data);
       setFetchAgain(!fetchAgain);
       setRenameLoading(false);
     } catch (error) {
-      toast({
-        title: "Error Occurred!",
-        description: error.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
+      if (error.response.status === 401) {
+        localStorage.removeItem("userInfo");
+        toast({
+          title: "Session Expired",
+          description: "Please Login",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Error Occurred!",
+          description: error.response.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+      }
       setRenameLoading(false);
     }
     setGroupChatName("");
@@ -88,18 +102,30 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
         `${process.env.REACT_APP_BASE_URL}/user?search=${search}`,
         config
       );
-      console.log("search ", data);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
-      toast({
-        title: "Error Occurred!",
-        description: "Failed to Load the Search Results",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-left",
-      });
+      if (error.response.status === 401) {
+        localStorage.removeItem("userInfo");
+        toast({
+          title: "Session Expired",
+          description: "Please Login",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Error Occurred!",
+          description: "Failed to Load the Search Results",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+      }
     }
   };
 
@@ -138,19 +164,31 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
         { chatId: selectedChat._id, userId: userToAdd._id },
         config
       );
-      console.log("added", data);
       setSelectedChat(data);
       setFetchAgain(!fetchAgain);
       setLoading(false);
     } catch (error) {
-      toast({
-        title: "Error Occurred!",
-        description: error.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
+      if (error.response.status === 401) {
+        localStorage.removeItem("userInfo");
+        toast({
+          title: "Session Expired",
+          description: "Please Login",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Error Occurred!",
+          description: error.response.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+      }
       setLoading(false);
     }
     setGroupChatName("");
@@ -184,20 +222,32 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
         { chatId: selectedChat._id, userId: userToRemove._id },
         config
       );
-      console.log("removed", data);
       userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(data);
       setFetchAgain(!fetchAgain);
       fetchMessages();
       setLoading(false);
     } catch (error) {
-      toast({
-        title: "Error Occurred!",
-        description: error.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
+      if (error.response.status === 401) {
+        localStorage.removeItem("userInfo");
+        toast({
+          title: "Session Expired",
+          description: "Please Login",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Error Occurred!",
+          description: error.response.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+      }
       setLoading(false);
     }
     setGroupChatName("");

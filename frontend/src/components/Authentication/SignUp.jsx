@@ -52,23 +52,15 @@ function SignUp() {
     }
 
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-      console.log("data", name, email, password, confirmPassword);
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/user`,
         {
           name,
           email,
           password,
           pic,
-        },
-        { config }
+        }
       );
-      console.log(response);
 
       toast({
         title: "Registration Successfully",
@@ -78,11 +70,10 @@ function SignUp() {
         position: "top",
       });
 
-      localStorage.setItem("userInfo", JSON.stringify(response));
+      localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
       navigate("/chats");
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error Ocurred!",
         description: error.response.data.message,
@@ -122,7 +113,6 @@ function SignUp() {
           setLoading(false);
         })
         .catch((err) => {
-          console.log(err);
           setLoading(false);
         });
     } else {

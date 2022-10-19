@@ -12,7 +12,7 @@ function ChatPage() {
 
   return (
     <div style={{ width: "100%" }}>
-      {user && <SideBar />}
+      {user && <SideBar  fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
       <Box
         display="flex"
         justifyContent="space-between"

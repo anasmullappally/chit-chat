@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -19,6 +20,7 @@ import "./style.css";
 import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../../animation/typing.json";
+import { useNavigate } from "react-router-dom";
 
 const defaultOptions = {
   loop: true,
@@ -32,7 +34,8 @@ const ENDPOINT = process.env.REACT_APP_SOCKET;
 let socket, selectedChatCompare;
 
 function SingleChat({ fetchAgain, setFetchAgain }) {
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -42,6 +45,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
   const [isTyping, setIsTyping] = useState(false);
 
   const toast = useToast();
+  const navigate = useNavigate();
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -63,7 +67,11 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       setLoading(false);
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
-      console.log(error);
+      if (error.response.status === 401) {
+        localStorage.removeItem("userInfo");
+        setFetchAgain(!fetchAgain);
+      }
+
       toast({
         title: "Error  occurred!",
         description: "Failed to Load the Message",
@@ -98,15 +106,27 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
 
         setMessages([...messages, data]);
       } catch (error) {
-        console.log(error);
-        toast({
-          title: "Error  occurred!",
-          description: "Failed to send the Message",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "top",
-        });
+        if (error.response.status === navigate("/")) {
+          localStorage.removeItem("userInfo");
+          toast({
+            title: "Session Expired",
+            description: "Please Login",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+          navigate("/");
+        } else {
+          toast({
+            title: "Error  occurred!",
+            description: "Failed to send the Message",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+        }
       }
     }
   };
@@ -144,14 +164,16 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
     fetchMessages();
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
-
   useEffect(() => {
     socket.on("message received", (newMessageReceived) => {
       if (
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessageReceived.chat._id
       ) {
-        //give notification
+        if (!notification.includes(newMessageReceived)) {
+          setNotification([newMessageReceived, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
       } else {
         setMessages([...messages, newMessageReceived]);
       }
