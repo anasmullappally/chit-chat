@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   InputGroup,
@@ -8,19 +10,34 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { loginValidation } from "../../config/validation";
 
 function Login() {
   const toast = useToast();
   const navigate = useNavigate();
+
+  const [error, setError] = useState({});
+  const [submit, setSubmit] = useState(false);
+
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let formData = {
+      email: email,
+      password: password,
+    };
+    setError(loginValidation(formData));
+    setSubmit(true);
+  };
 
   const submitHandler = async () => {
     setLoading(true);
@@ -65,17 +82,26 @@ function Login() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (Object.keys(error).length === 0 && submit) {
+      submitHandler();
+    }
+  }, [error, submit]);
+
   return (
     <VStack spacing={"5px"}>
-      <FormControl id="email" isRequired>
+      <FormControl id="email" isRequired isInvalid={error.email}>
         <FormLabel>Email</FormLabel>
         <Input
           placeholder="Enter Your Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         ></Input>
+        {error.email && (
+          <FormErrorMessage m={0}>{error.email}</FormErrorMessage>
+        )}
       </FormControl>
-      <FormControl id="password" isRequired>
+      <FormControl id="password" isRequired isInvalid={error.password}>
         <FormLabel>Password</FormLabel>
         <InputGroup>
           <Input
@@ -90,13 +116,16 @@ function Login() {
             </Button>
           </InputRightElement>
         </InputGroup>
+        {error.password && (
+          <FormErrorMessage m={0}>{error.password}</FormErrorMessage>
+        )}
       </FormControl>
 
       <Button
         colorScheme={"blackAlpha"}
         width="100%"
         style={{ marginTop: 20 }}
-        onClick={submitHandler}
+        onClick={handleSubmit}
         isLoading={loading}
       >
         Sign In
