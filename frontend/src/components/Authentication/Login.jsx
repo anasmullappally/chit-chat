@@ -41,17 +41,7 @@ function Login() {
 
   const submitHandler = async () => {
     setLoading(true);
-    if (!email || !password) {
-      toast({
-        title: "Please Fill All the fields",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      setLoading(false);
-      return;
-    }
+
     try {
       const { data } = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/user/login`,
