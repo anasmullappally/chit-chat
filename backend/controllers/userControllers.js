@@ -4,7 +4,6 @@ const generateToken = require("../config/generateToken");
 
 const registerUSer = asyncHandler(async (req, res) => {
   const { name, email, password, picture } = req.body;
-
   if (!name || !email || !password) {
     res.status(400);
     throw new Error("Please Enter all the fields");
@@ -64,7 +63,6 @@ const allUsers = asyncHandler(async (req, res) => {
     : {};
 
   const users = await User.find(keyWord).find({ _id: { $ne: req.user._id } });
-  res.send(users)
+  res.send(users);
 });
-
 module.exports = { registerUSer, authUSer, allUsers };
